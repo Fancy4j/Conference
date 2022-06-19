@@ -1,0 +1,41 @@
+spring:
+  port: 8082
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/conference?serverTimezone=GMT%2B8&useSSL=true&characterEncoding=utf8
+    username: root   #数据库
+    password: 123456 #密码
+  jackson:
+    time-zone: GMT+8
+    date-format: yyyy-MM-dd HH:mm:ss
+  servlet:
+    multipart:
+      enabled: true
+      #单个文件大小限制
+      max-file-size: 20MB
+      #单个请求总的大小限制
+      max-request-size: 200MB
+pagehelper:
+  helper-dialect: mysql
+  reasonable: true
+  support-methods-arguments: true
+mybatis-plus:
+  mapper-locations: classpath:mapper/*Mapper.xml
+  type-aliases-package: com.example.pojo
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl #打印sql语句,调试用
+  global-config:
+    db-config:
+      table-prefix:
+      id-type: auto
+
+# 文件访问路径前缀
+fileAccessUrlPrefix: http://119.3.42.30:8088/resources
+
+# 文件存储路径前缀
+localPathPrefix: D:\assets
+#localPathPrefix: /home/assets
+
+#外部接口调用路径
+url:
+  fileUploadBaseUrl: http://119.3.101.155/api/common
