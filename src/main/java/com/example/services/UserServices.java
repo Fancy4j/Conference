@@ -1,6 +1,8 @@
 package com.example.services;
 
+import com.example.api.CommonResult;
 import com.example.pojo.User;
+import com.example.pojo.Userinfo;
 
 import java.util.List;
 
@@ -15,9 +17,12 @@ public interface UserServices {
     //根据id查询姓名
     public User queryByID(int id);
 
-    //禁用用户
-    public int updateUserStatus(User user);
 
-    //重置用户密码
-    public int updateUserPassword(User user);
+    public CommonResult updateUserPassword(Integer userId,String password);
+
+    CommonResult addUser(Userinfo userInfo);
+
+    CommonResult findUser(String userName, String userPwd);
+
+    CommonResult updateUserStatus(String emial, String userRole,Integer meetingId);
 }

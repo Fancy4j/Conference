@@ -1,5 +1,6 @@
 package com.example.mapper;
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.example.pojo.User;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
@@ -8,7 +9,7 @@ import java.util.List;
 
 @Mapper
 @Repository
-public interface UserMapper {
+public interface UserMapper extends BaseMapper<User> {
     //查询所有普通用户
     public List<User> queryAll();
     //添加数据

@@ -11,11 +11,19 @@ import lombok.experimental.Accessors;
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
 @ApiModel(value = "用户信息表")
-public class UserInfo {
+public class Userinfo {
 
     @ApiModelProperty("用户id")
     @TableField("user_id")
     Integer userId;
+
+    @ApiModelProperty("用户名")
+    @TableField(exist = false)
+    String username;
+
+    @ApiModelProperty("密码")
+    @TableField(exist = false)
+    String password;
 
     @ApiModelProperty("用户角色")
     @TableField("user_role")

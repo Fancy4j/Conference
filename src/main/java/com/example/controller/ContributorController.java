@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @Slf4j
 @RequestMapping("/contributor")
-@Api(value = "投稿人接口", description = "投稿人 投稿、查看稿件状态和稿件回复的功能")
+@Api(value = "投稿人接口", description = "投稿人 投稿、查看所有投稿列表、查看某个稿件状态和稿件回复、取消投稿的功能")
 public class ContributorController {
 
     @Autowired
@@ -38,7 +38,7 @@ public class ContributorController {
     }
 
     @GetMapping("/checkArticle")
-    @ApiOperation(value = "查看文章状态，已经审稿人回复")
+    @ApiOperation(value = "查看文章状态，已有审稿人回复status=0时才能调用")
     public CommonResult checkArticle(@RequestParam("articleId")Integer articleId){
         if (articleId == null) {
             return CommonResult.failed("参数不足");
@@ -54,9 +54,11 @@ public class ContributorController {
 
     @GetMapping("/queryArticles")
     @ApiOperation(value = "查看所有文章状态")
-    public CommonResult queryArticles(){
+    public CommonResult queryArticles(@RequestParam("userId")Integer userId,
+                                      @RequestParam("pageNum")Integer pageNum,
+                                      @RequestParam("pageSize")Integer pageSize){
         try {
-            return contributorService.queryArticles();
+            return contributorService.queryArticles(userId,pageNum,pageSize);
         }catch (Exception e){
             e.printStackTrace();
             log.error("queryArticles接口异常");

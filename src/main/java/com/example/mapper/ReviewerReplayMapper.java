@@ -1,5 +1,6 @@
 package com.example.mapper;
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.example.pojo.ContributorMeeting;
 import com.example.pojo.MeetingArticle;
 import com.example.pojo.ReviewerReplay;
@@ -9,7 +10,7 @@ import org.springframework.stereotype.Repository;
 
 @Mapper
 @Repository
-public interface ReviewerReplayMapper {
+public interface ReviewerReplayMapper extends BaseMapper<ReviewerReplay> {
 
     ReviewerReplay getArticle(Integer article);
 }

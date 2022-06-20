@@ -2,105 +2,72 @@ package com.example.controller;
 
 import com.example.api.CommonResult;
 import com.example.pojo.User;
-import com.example.services.Impl.UserServicesImpl;
+import com.example.pojo.Userinfo;
 import com.example.services.UserServices;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import java.io.UnsupportedEncodingException;
 import java.util.List;
 
-/*
-@RestController注解相当于@ResponseBody ＋ @Controller合在一起的作用。
-1) 如果只是使用@RestController注解Controller，则Controller中的方法无法返回jsp页面，
-或者html，配置的视图解析器 InternalResourceViewResolver不起作用，返回的内容就是Return 里的内容。
-2) 如果需要返回到指定页面，则需要用 @Controller配合视图解析器InternalResourceViewResolver才行。
-    如果需要返回JSON，XML或自定义mediaType内容到页面，则需要在对应的方法上加上@ResponseBody注解。
- */
 @RestController
+@Slf4j
 @RequestMapping("/")
-@Api(value = "会议操作的接口", description = "提供会议信息相关信息查询、修改的功能")
+@Api(value = "系统用户接口", description = "用户注册、登录、修改个人信息")
 public class UserController {
 
     @Autowired
     UserServices userServices;
-    //用户登录
-    @RequestMapping(value = "/Login",produces = "application/json;charset=utf-8",  method = RequestMethod.POST)
-    public CommonResult userLogin(String userName, String userPwd) throws UnsupportedEncodingException {
-        //先查询该用户名是否存在
-        User user1= userServices.queryByName(userName);
-        if(user1 != null){//  如果查询的用户不为空
-            userPwd = java.net.URLDecoder.decode(userPwd,"UTF-8");
-            if(user1.getPassword().equals(userPwd)){
-                return CommonResult.success(user1,"登录成功");
-            }else {
-                return CommonResult.validateFailed("密码错误");
-            }
+
+    @PostMapping(value = "/login")
+    @ApiOperation(value = "登录", notes = "lbf")
+    public CommonResult userLogin(@RequestParam("userName") String userName, @RequestParam("userPwd") String userPwd) {
+        if(StringUtils.isEmpty(userName) || StringUtils.isEmpty(userPwd)){
+            return CommonResult.validateFailed("用户名或密码为空");
         }
-        // 如果查询的用户为空
-        return  CommonResult.validateFailed("用户名不存在");
-    }
-    //用户注册
-    @RequestMapping(value = "/Register",produces = "application/json;charset=utf-8", method = RequestMethod.POST)
-    public CommonResult userRegister(String userName, String userPwd, String realName) throws UnsupportedEncodingException {
-        User user1 = userServices.queryByName(userName);
-        if(user1!=null){
-            return CommonResult.validateFailed("用户名已存在！");
+        try {
+            return userServices.findUser(userName,userPwd);
+        }catch (Exception e){
+            e.printStackTrace();
+            log.error("login接口异常，入参1为{}，入参2为{}",userName,userPwd);
+            return CommonResult.failed("登录异常");
         }
-        String regex = "^[a-z0-9A-Z]+$";
-        if(!userName.matches(regex)){
-            return CommonResult.validateFailed("账号格式不对，账号只能由数字与字母组成！");
-        }
-        userPwd = java.net.URLDecoder.decode(userPwd,"UTF-8");
-        User user = new User();
-        user.setUsername(userName);
-        user.setPassword(userPwd);
-        //将账号密码加入到数据库中
-        int add = userServices.add(user);
-        user1 = userServices.queryByName(user.getUsername());
-        return CommonResult.success(user1,"注册成功，请登录！");
     }
 
-    //查询所有普通用户
-    @RequestMapping(value = "/userQuery",produces = "application/json;charset=utf-8", method = RequestMethod.POST)
-    public CommonResult userQuery(Integer pageNum){
-        PageHelper.startPage(pageNum, 5);
-        List<User> users = userServices.queryAll();
-        PageInfo<User> pageInfo = new PageInfo<User>(users);
-        return CommonResult.success(pageInfo,"查询成功！");
-    }
-    //改变普通用户状态
-    @RequestMapping(value = "/userStatusUpdate",produces = "application/json;charset=utf-8",method = RequestMethod.POST)
-    public CommonResult userStatusUpdate(User user) {
-        User user1 = userServices.queryByName(user.getUsername());
-        //更新用户状态
-        userServices.updateUserStatus(user1);
-        return CommonResult.success(user1, "禁用成功！");
-    }
-
-    //重置普通用户密码
-    @RequestMapping(value = "/userResetPassword",produces = "application/json;charset=utf-8",method = RequestMethod.POST)
-    public CommonResult userResetPassword(User user) {
-        //更新用户密码
-        User user1 = (User) userUpdatePassword(user, "000000").getData();
-        return CommonResult.success(user1, "重置密码成功！");
-    }
-
-    //修改密码
-    @RequestMapping(value = "/userUpdatePassword",produces = "application/json;charset=utf-8",method = RequestMethod.POST)
-    public CommonResult userUpdatePassword(User user, String newPwd) {
-        User user1 = userServices.queryByName(user.getUsername());
-        if(newPwd.equals(userServices.queryByName(user.getUsername()).getPassword())){
-            return CommonResult.validateFailed("新密码不能与原密码相同！");
+    @PostMapping(value = "/register")
+    @ApiOperation(value = "注册(不需要userId,它是自增的)", notes = "lbf")
+    public CommonResult userRegister(@RequestBody Userinfo userInfo){
+        if(userInfo == null){
+            return CommonResult.failed("注册信息不能为空");
         }
-        user1.setPassword(newPwd);
-        //更新用户密码
-        userServices.updateUserPassword(user1);
-        return CommonResult.success(user1, "修改密码成功！");
+        try{
+            return userServices.addUser(userInfo);
+        }catch (Exception e){
+            e.printStackTrace();
+            log.error("注册接口异常，入参为：{}",userInfo);
+            return CommonResult.failed("注册失败");
+        }
     }
+
+    @PostMapping(value = "/userUpdatePassword")
+    @ApiOperation(value = "修改用户密码", notes = "lbf")
+    public CommonResult userUpdatePassword(@RequestParam("userId") Integer userId,@RequestParam("newPwd") String newPwd) {
+        if(StringUtils.isEmpty(newPwd) || userId == null){
+            return CommonResult.validateFailed("用户新密码为空");
+        }
+        try{
+            return userServices.updateUserPassword(userId,newPwd);
+        }catch (Exception e){
+            e.printStackTrace();
+            log.error("userUpdatePassword接口异常，入参1为{}，入参2为{}",userId,newPwd);
+            return CommonResult.failed("用户修改密码异常");
+        }
+    }
+
+
 }

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.example.mapper.UserArticleMapper">
+    <!--查询目前最大的会议号-->
+    <select id="selectMaxArticleId" resultType="Integer">
+      select IFNULL(max(article_id),0)  from `user_article`
+    </select>
+
+</mapper>
+

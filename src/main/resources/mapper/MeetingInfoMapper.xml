@@ -3,7 +3,12 @@
 <mapper namespace="com.example.mapper.MeetingInfoMapper">
 
     <!--查询在截止日期在当前时间之前的会议信息-->
-    <select id="meetingAvailble" resultType="com.example.pojo.MeetingInfo">
+    <select id="meetingAvailble" resultType="com.example.pojo.Meetinginfo">
         select * from `meetinginfo` where endtime &gt; now()
+    </select>
+
+    <!--查询目前最大的会议号-->
+    <select id="selctMaxMeetingId" resultType="Integer">
+      select IFNULL(max(meeting_id),0)  from `meetinginfo`
     </select>
 </mapper>

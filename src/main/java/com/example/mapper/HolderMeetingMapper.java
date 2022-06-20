@@ -1,6 +1,7 @@
 package com.example.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.example.pojo.HolderMeeting;
 import com.example.pojo.Meetinginfo;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
@@ -9,11 +10,7 @@ import java.util.List;
 
 @Mapper
 @Repository
-public interface MeetingInfoMapper extends BaseMapper<Meetinginfo> {
+public interface HolderMeetingMapper extends BaseMapper<HolderMeeting> {
 
-    //  查询当前可投的会议列表
-    List<Meetinginfo> meetingAvailble();
-
-    Integer selctMaxMeetingId();
-
+    List<Meetinginfo> selectMeetingByHostId(Integer hostId);
 }

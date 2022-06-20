@@ -23,7 +23,7 @@
     </update>
 
     <update id="updateUserPassword" parameterType="com.example.pojo.User">
-        update `user` set password=#{userPwd} where user_id= #{userID}
+        update `user` set password=#{password} where user_id= #{userId}
     </update>
 
 </mapper>

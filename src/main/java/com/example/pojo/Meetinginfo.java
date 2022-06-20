@@ -15,7 +15,7 @@ import java.util.Date;
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
 @ApiModel(value = "会议信息表")
-public class MeetingInfo {
+public class Meetinginfo {
 
     @ApiModelProperty("会议id")
     @TableField("meeting_id")
@@ -53,4 +53,7 @@ public class MeetingInfo {
     @TableField("ref")
     String ref;
 
+    @ApiModelProperty("会议详情")
+    @TableField("detail")
+    String detail;
 }

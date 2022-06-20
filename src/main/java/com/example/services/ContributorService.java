@@ -8,7 +8,7 @@ public interface ContributorService {
 
     CommonResult checkArticle(Integer articleId);
 
-    CommonResult queryArticles();
+    CommonResult queryArticles(Integer userId,Integer pageNum,Integer pageSize);
 
     CommonResult delContrubution(Integer articleId);
 }

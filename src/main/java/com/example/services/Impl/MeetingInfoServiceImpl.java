@@ -1,7 +1,7 @@
 package com.example.services.Impl;
 
 import com.example.mapper.MeetingInfoMapper;
-import com.example.pojo.MeetingInfo;
+import com.example.pojo.Meetinginfo;
 import com.example.services.MeetingInfoService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +17,7 @@ public class MeetingInfoServiceImpl implements MeetingInfoService {
     MeetingInfoMapper meetingInfoMapper;
 
     @Override
-    public List<MeetingInfo> getMeetingList() {
+    public List<Meetinginfo> getMeetingList() {
         return meetingInfoMapper.meetingAvailble();
     }
 }
