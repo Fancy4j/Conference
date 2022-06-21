@@ -9,6 +9,7 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import javafx.scene.chart.ValueAxis;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -63,6 +64,27 @@ public class ContributorController {
             e.printStackTrace();
             log.error("queryArticles接口异常");
             return CommonResult.failed("无法查看投稿文章列表");
+        }
+    }
+
+    @GetMapping("/queryArticlesByName")
+    @ApiOperation(value = "按照稿件title模糊查询投稿记录")
+    public CommonResult queryArticlesByName(@RequestParam("userId")Integer userId,
+                                      @RequestParam("articleName")String articleName,
+                                      @RequestParam("pageNum")Integer pageNum,
+                                      @RequestParam("pageSize")Integer pageSize){
+        if(userId == null){
+            return CommonResult.validateFailed("userId为空");
+        }
+        if(StringUtils.isEmpty(articleName)){
+            return CommonResult.validateFailed("文章名字为空");
+        }
+        try {
+            return contributorService.queryArticlesByName(userId,articleName,pageNum,pageSize);
+        }catch (Exception e){
+            e.printStackTrace();
+            log.error("queryArticlesByName接口异常");
+            return CommonResult.failed("无法查看查询文章");
         }
     }
 

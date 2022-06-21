@@ -4,7 +4,9 @@
 
     <!--根据主持人id查询会议信息-->
     <select id="selectMeetingByHostId" parameterType="Integer" resultType="com.example.pojo.Meetinginfo">
-        select t2.* from holder_meeting t1
+        select t2.*,
+        if(endtime &lt; now(),0,1) as status
+        from holder_meeting t1
         inner join `meetinginfo` t2 on t1.meeting_id = t2.meeting_id
         where t1.user_id = #{hostId}
     </select>

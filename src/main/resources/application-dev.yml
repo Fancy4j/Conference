@@ -33,7 +33,7 @@ mybatis-plus:
 fileAccessUrlPrefix: http://119.3.42.30:8088/resources
 
 # 文件存储路径前缀
-localPathPrefix: D:\assets
+localPathPrefix: D:/assets
 #localPathPrefix: /home/assets
 
 #外部接口调用路径

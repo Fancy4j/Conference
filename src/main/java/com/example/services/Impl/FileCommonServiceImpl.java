@@ -68,7 +68,7 @@ public class FileCommonServiceImpl<T> implements FileCommonService<T> {
 
                 String savePath =  localFileName + "-" + fileName;
                 String accessPath = fileAccessUrlPrefix + savePath;
-                map.put("savePath", savePath);
+                map.put("savePath", localPathPrefix + "/" + savePath);
                 map.put("accessPath", accessPath);
 
                 //	File filePath = new File(projectPath + BosConstants.FILE_PREFIX + typeDirectoryName);
@@ -82,11 +82,11 @@ public class FileCommonServiceImpl<T> implements FileCommonService<T> {
                 File localFile = new File(localPathPrefix + File.separator + savePath);
                 try {
                     file.transferTo(localFile);
-                    log.info("bos上传文件，入参为{}，localFile为{}",file,localFile);
+                    log.info("上传文件，入参为{}，localFile为{}",file,localFile);
                     localFile.setReadable(true, false);
                 } catch (IOException e) {
                     e.printStackTrace();
-                    log.error("bos上传文件失败，入参{}，错误信息{}",files,e.getMessage());
+                    log.error("上传文件失败，入参{}，错误信息{}",files,e.getMessage());
                     return CommonResult.failed("文件上传失败");
                 }
                 list.add(map);

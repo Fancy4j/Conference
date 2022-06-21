@@ -6,6 +6,8 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
+import java.util.Date;
+
 @lombok.Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
@@ -23,5 +25,9 @@ public class ReviewerMeeting {
     @ApiModelProperty("会议id")
     @TableField("meeting_id")
     Integer meetingId;
+
+    @ApiModelProperty("指派时间")
+    @TableField("appoint_time")
+    Date appointTime;
 
 }

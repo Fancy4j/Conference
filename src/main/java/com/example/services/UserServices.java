@@ -4,6 +4,7 @@ import com.example.api.CommonResult;
 import com.example.pojo.User;
 import com.example.pojo.Userinfo;
 
+import java.util.Date;
 import java.util.List;
 
 public interface UserServices {
@@ -24,5 +25,9 @@ public interface UserServices {
 
     CommonResult findUser(String userName, String userPwd);
 
-    CommonResult updateUserStatus(String emial, String userRole,Integer meetingId);
+    CommonResult updateUserStatus(String emial, Date appointTime, Integer meetingId);
+
+    CommonResult getUserInfo(Integer userId);
+
+    CommonResult updateUserInfo(Userinfo userInfo);
 }

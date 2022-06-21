@@ -4,7 +4,9 @@
 
     <!--查询在截止日期在当前时间之前的会议信息-->
     <select id="meetingAvailble" resultType="com.example.pojo.Meetinginfo">
-        select * from `meetinginfo` where endtime &gt; now()
+        select meeting_id,theme,`name`,abbreviation,starttime, endtime,location,ref,
+        if(endtime &lt; now(),0,1) as status
+        from `meetinginfo`
     </select>
 
     <!--查询目前最大的会议号-->

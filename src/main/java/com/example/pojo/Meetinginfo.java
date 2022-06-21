@@ -56,4 +56,8 @@ public class Meetinginfo {
     @ApiModelProperty("会议详情")
     @TableField("detail")
     String detail;
+
+    @ApiModelProperty("会议详情")
+    @TableField(exist = false)
+    String status;
 }

@@ -76,7 +76,7 @@ public class ContributorServiceImpl implements ContributorService {
     @Override
     public CommonResult queryArticles(Integer userId,Integer pageNum,Integer pageSize) {
         PageHelper.startPage(pageNum, pageSize);
-        List<UserArticle> userArticleList = userArticleMapper.selectList(new QueryWrapper<UserArticle>().eq("user_id",userId));
+        List<UserArticle> userArticleList = userArticleMapper.selectArticleInfo(userId);
         PageInfo<UserArticle> pageInfo = new PageInfo<UserArticle>(userArticleList);
         return CommonResult.success(pageInfo,"查询成功");
     }
@@ -84,11 +84,19 @@ public class ContributorServiceImpl implements ContributorService {
     @Override
     public CommonResult delContrubution(Integer articleId) {
         UserArticle userArticle = userArticleMapper.selectOne(new QueryWrapper<UserArticle>().eq("article_id", articleId));
-        userArticle.setStatus(4);
+        userArticle.setStatus(10);
         int article_id = userArticleMapper.update(userArticle,new QueryWrapper<UserArticle>().eq("article_id", articleId));
         if(article_id > 0){
             return CommonResult.success("取消投稿成功");
         }
         return CommonResult.failed("取消投稿失败");
+    }
+
+    @Override
+    public CommonResult queryArticlesByName(Integer userId, String articleName, Integer pageNum, Integer pageSize) {
+        PageHelper.startPage(pageNum, pageSize);
+        List<UserArticle> userArticleList = userArticleMapper.selectArticleInfo2(userId,articleName);
+        PageInfo<UserArticle> pageInfo = new PageInfo<UserArticle>(userArticleList);
+        return CommonResult.success(pageInfo,"查询成功");
     }
 }

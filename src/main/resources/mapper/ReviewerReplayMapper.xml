@@ -4,10 +4,13 @@
 
     <!--查询在截止日期在当前时间之前的会议信息-->
     <select id="getArticle" parameterType="Integer" resultType="com.example.pojo.ReviewerReplay">
-        select t2.*,t3.name as reviewer_name,t1.status,t1.title,t1.content,t1.keywords
+        select t2.*,t3.name as reviewer_name,t1.status,t1.title,t1.content,t1.keywords,t1.authors,
+        t5.*
         from user_article t1
         right join reviewer_replay t2 ON t1.article_id = t2.article_id
         right join userinfo t3 on t2.reviewer_id = t3.user_id
-        where t1.article_id = #{articleId} and t1.status &lt; 4
+        right join meeting_article t4 on t1.article_id = t4.article_id
+        right join meetinginfo t5 on t5.meeting_id = t4.meeting_id
+        where t1.article_id = #{articleId} and t1.status &lt; 10
     </select>
 </mapper>

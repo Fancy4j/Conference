@@ -13,6 +13,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -122,37 +123,65 @@ public class UserServicesImpl implements UserServices {
         if(user == null){
             return CommonResult.failed("用户名或者密码错误");
         }
+        user.setPassword("");
         return CommonResult.success(user,"登录成功");
     }
 
     /**
      * 增加审稿人（修改用户角色）
      * @param email
-     * @param userRole
+     * @param appointTime
      * @return
      */
     @Override
-    public CommonResult updateUserStatus(String email, String userRole, Integer meetingId) {
+    public CommonResult updateUserStatus(String email, Date appointTime, Integer meetingId) {
 
         Userinfo userInfo = userInfoMapper.selectOne(new QueryWrapper<Userinfo>().eq("email",email));
         if(userInfo == null){
             return CommonResult.failed("不存在此用户id的用户");
         }
+        String roles = userInfo.getUserRole();
+        if(roles.contains("2")){
+            return CommonResult.failed("已经将此人指派为审稿人");
+        }
+        roles += ",2";
         User user = userMapper.selectOne(new QueryWrapper<User>().eq("user_id", userInfo.getUserId()));
         if(user == null){
             return CommonResult.failed("不存在此用户id的用户");
         }
-        user.setUserRole(userRole);
-        userInfo.setUserRole(userRole);
+        user.setUserRole(roles);
+        userInfo.setUserRole(roles);
         int update = userMapper.update(user,new QueryWrapper<User>().eq("user_id",userInfo.getUserId()));
         int update1 = userInfoMapper.update(userInfo,new QueryWrapper<Userinfo>().eq("user_id",userInfo.getUserId()));
         ReviewerMeeting reviewerMeeting = new ReviewerMeeting();
         reviewerMeeting.setMeetingId(meetingId);
         reviewerMeeting.setUserId(userInfo.getUserId());
+        reviewerMeeting.setAppointTime(appointTime);
         int insert = reviewerMeetingMapper.insert(reviewerMeeting);
         if(update > 0 && update1 > 0 && insert > 0){
             return CommonResult.success("增加审稿人成功");
         }
         return CommonResult.failed("增加审稿人失败");
+    }
+
+    @Override
+    public CommonResult getUserInfo(Integer userId) {
+        Userinfo userInfo = userInfoMapper.selectOne(new QueryWrapper<Userinfo>().eq("user_id", userId));
+        User user = userMapper.selectOne(new QueryWrapper<User>().eq("user_id", userInfo.getUserId()));
+        if(userInfo == null || user == null){
+            return CommonResult.validateFailed("不存在该用户信息");
+        }
+        userInfo.setPassword(user.getPassword());
+        userInfo.setUsername(user.getUsername());
+        return CommonResult.success(userInfo,"查询成功");
+    }
+
+    @Override
+    public CommonResult updateUserInfo(Userinfo userInfo) {
+        int update = userInfoMapper.update(userInfo, new QueryWrapper<Userinfo>().eq("user_id", userInfo.getUserId()));
+        if(update > 0){
+            return CommonResult.success(userInfo,"修改用户详细信息成功");
+        }
+        return CommonResult.failed("修改用户详细信息失败");
     }
 }

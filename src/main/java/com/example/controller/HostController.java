@@ -13,6 +13,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 @RestController
 @Slf4j
 @RequestMapping("/host")
@@ -28,22 +31,24 @@ public class HostController {
     @PostMapping(value = "/userStatusUpdate")
     @ApiOperation(value = "指派审稿人（修改用户角色）", notes = "lbf")
     public CommonResult userStatusUpdate(@RequestParam("email") String email,
-                                         @RequestParam("userRole")String userRole,
+                                         @RequestParam("appointTime") String appointTime,
                                          @RequestParam("meetingId")Integer meetingId) {
         if(StringUtils.isEmpty(email)){
             return CommonResult.validateFailed("email为空");
         }
-        if(StringUtils.isEmpty(userRole)){
-            return CommonResult.validateFailed("用户角色为空");
+        if(StringUtils.isEmpty(appointTime)){
+            return CommonResult.validateFailed("时间为空");
         }
         if(meetingId == null){
             return CommonResult.validateFailed("会议号为空");
         }
         try{
-            return userServices.updateUserStatus(email,userRole,meetingId);
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            Date date = simpleDateFormat.parse(appointTime);
+            return userServices.updateUserStatus(email,date,meetingId);
         }catch (Exception e){
             e.printStackTrace();
-            log.error("userStatusUpdate接口异常，入参1为{},入参2为{}，入参3{}",email,userRole,meetingId);
+            log.error("userStatusUpdate接口异常，入参1为{},入参2为{}，入参3{}",email,appointTime,meetingId);
             return CommonResult.failed("增加审稿人异常");
         }
     }

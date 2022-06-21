@@ -50,4 +50,53 @@ public class UserArticle {
     @ApiModelProperty("文章审核状态")
     @TableField("status")
     Integer status;
+
+    @ApiModelProperty("文章作者")
+    @TableField("authors")
+    String authors;
+
+    @ApiModelProperty("会议id")
+    @TableField(exist = false)
+    Integer meetingId;
+
+    @ApiModelProperty("主题")
+    @TableField(exist = false)
+    String theme;
+
+    @ApiModelProperty("会议名称")
+    @TableField(exist = false)
+    String name;
+
+    @ApiModelProperty("会议缩写")
+    @TableField(exist = false)
+    String abbreviation;
+
+    @ApiModelProperty("开始时间")
+    @TableField(exist = false)
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    Date starttime;
+
+    @ApiModelProperty("结束时间")
+    @TableField(exist = false)
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    Date endtime;
+
+    @ApiModelProperty("地址")
+    @TableField(exist = false)
+    String location;
+
+    @ApiModelProperty("会议网址链接")
+    @TableField(exist = false)
+    String ref;
+
+    @ApiModelProperty("会议详情")
+    @TableField(exist = false)
+    String detail;
+
+    @ApiModelProperty("会议状态")
+    @TableField(exist = false)
+    String conferenceStatus;
+
 }

@@ -11,4 +11,6 @@ public interface ContributorService {
     CommonResult queryArticles(Integer userId,Integer pageNum,Integer pageSize);
 
     CommonResult delContrubution(Integer articleId);
+
+    CommonResult queryArticlesByName(Integer userId, String articleName, Integer pageNum, Integer pageSize);
 }
