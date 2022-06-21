@@ -12,7 +12,9 @@ import com.example.services.UserServices;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -129,42 +131,53 @@ public class UserServicesImpl implements UserServices {
 
     /**
      * 增加审稿人（修改用户角色）
-     * @param email
+     * @param userIds
      * @param appointTime
      * @return
      */
     @Override
-    public CommonResult updateUserStatus(String email, Date appointTime, Integer meetingId) {
+    @Transactional(rollbackFor = Exception.class)
+    public CommonResult updateUserStatus(String userIds, Date appointTime, Integer meetingId) {
+        //批量增加审稿人
+        if(appointTime != null){
+            String[] split = userIds.split(",");
+            ArrayList<Integer> idList = new ArrayList<>();
+            for(int i = 0; i < split.length; i++){
+                Integer id = Integer.valueOf(split[i]);
+                idList.add(id);
 
-        Userinfo userInfo = userInfoMapper.selectOne(new QueryWrapper<Userinfo>().eq("email",email));
-        if(userInfo == null){
-            return CommonResult.failed("不存在此用户id的用户");
+                ReviewerMeeting reviewerMeeting = new ReviewerMeeting();
+                reviewerMeeting.setMeetingId(meetingId);
+                reviewerMeeting.setUserId(id);
+                reviewerMeeting.setAppointTime(appointTime);
+                int insert = reviewerMeetingMapper.insert(reviewerMeeting);
+            }
+            int update = userInfoMapper.updateStatus2(idList);
+            int update1 = userMapper.updateStatus2(idList);
+
+            if(update > 0 && update1 >0){
+                return CommonResult.success("指定审稿人成功");
+            }
+        }else{
+            //删除审稿人
+            String[] split = userIds.split(",");
+            ArrayList<Integer> idList = new ArrayList<>();
+            for(int i = 0; i < split.length; i++) {
+                Integer id = Integer.valueOf(split[i]);
+                idList.add(id);
+                int delete = reviewerMeetingMapper.delete(new QueryWrapper<ReviewerMeeting>().eq("user_id", id).eq("meeting_id", meetingId));
+            }
+            int update = userInfoMapper.delStatus2(idList);
+            int update1 = userMapper.delStatus2(idList);
+            if(update > 0 && update1 >0){
+                return CommonResult.success("取消审稿人成功");
+            }
         }
-        String roles = userInfo.getUserRole();
-        if(roles.contains("2")){
-            return CommonResult.failed("已经将此人指派为审稿人");
-        }
-        roles += ",2";
-        User user = userMapper.selectOne(new QueryWrapper<User>().eq("user_id", userInfo.getUserId()));
-        if(user == null){
-            return CommonResult.failed("不存在此用户id的用户");
-        }
-        user.setUserRole(roles);
-        userInfo.setUserRole(roles);
-        int update = userMapper.update(user,new QueryWrapper<User>().eq("user_id",userInfo.getUserId()));
-        int update1 = userInfoMapper.update(userInfo,new QueryWrapper<Userinfo>().eq("user_id",userInfo.getUserId()));
-        ReviewerMeeting reviewerMeeting = new ReviewerMeeting();
-        reviewerMeeting.setMeetingId(meetingId);
-        reviewerMeeting.setUserId(userInfo.getUserId());
-        reviewerMeeting.setAppointTime(appointTime);
-        int insert = reviewerMeetingMapper.insert(reviewerMeeting);
-        if(update > 0 && update1 > 0 && insert > 0){
-            return CommonResult.success("增加审稿人成功");
-        }
-        return CommonResult.failed("增加审稿人失败");
+        return CommonResult.failed("对审稿人的操作失败");
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public CommonResult getUserInfo(Integer userId) {
         Userinfo userInfo = userInfoMapper.selectOne(new QueryWrapper<Userinfo>().eq("user_id", userId));
         User user = userMapper.selectOne(new QueryWrapper<User>().eq("user_id", userInfo.getUserId()));

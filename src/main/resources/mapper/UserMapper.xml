@@ -26,5 +26,28 @@
         update `user` set password=#{password} where user_id= #{userId}
     </update>
 
+    <update id="updateStatus2" parameterType="List">
+        update `user` set user_role=CONCAT(user_role,',2')
+        <where>
+            <if test="idList != null">
+                 user_id in
+                <foreach collection="idList" item="id" index="index" open="(" separator="," close=")">
+                    #{id}
+                </foreach>
+            </if>
+        </where>
+    </update>
+
+    <update id="delStatus2" parameterType="List">
+        update `user` set user_role=replace(user_role,',2','')
+        <where>
+            <if test="idList != null">
+                 user_id in
+                <foreach collection="idList" item="id" index="index" open="(" separator="," close=")">
+                    #{id}
+                </foreach>
+            </if>
+        </where>
+    </update>
 </mapper>
 

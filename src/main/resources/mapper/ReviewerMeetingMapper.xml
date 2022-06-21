@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.example.mapper.ReviewerMeetingMapper">
+
+    <!--根据主持人id查询审稿人信息-->
+    <select id="reviewerAllocatedByMeetingId" parameterType="Integer" resultType="com.example.pojo.Userinfo">
+        select t2.*
+        from reviewer_meeting t1
+        inner join `userinfo` t2 on t1.user_id = t2.user_id
+        where t1.meeting_id = #{meetingId}
+    </select>
+
+
+    <select id="reviewerIdByMeetingId" parameterType="Integer" resultType="Integer">
+        select t2.user_id
+        from reviewer_meeting t1
+        inner join `userinfo` t2 on t1.user_id = t2.user_id
+        where t1.meeting_id = #{meetingId}
+    </select>
+
+</mapper>

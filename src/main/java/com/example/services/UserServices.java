@@ -25,7 +25,7 @@ public interface UserServices {
 
     CommonResult findUser(String userName, String userPwd);
 
-    CommonResult updateUserStatus(String emial, Date appointTime, Integer meetingId);
+    CommonResult updateUserStatus(String userIds, Date appointTime, Integer meetingId);
 
     CommonResult getUserInfo(Integer userId);
 

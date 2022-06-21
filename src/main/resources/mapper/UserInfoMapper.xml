@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.example.mapper.UserInfoMapper">
+
+    <select id="reviewerAvailable" parameterType="List" resultType="com.example.pojo.Userinfo">
+        select * from `userinfo`
+        <where>
+            <if test="reviewerIdList != null">
+                 user_id not in
+                <foreach collection="reviewerIdList" item="ids" index="index" open="(" separator="," close=")">
+                    #{ids}
+                </foreach>
+            </if>
+        </where>
+    </select>
+
+    <update id="updateStatus2" parameterType="List">
+        update `userinfo` set user_role=CONCAT(user_role,',2')
+        <where>
+            <if test="idList != null">
+                 user_id in
+                <foreach collection="idList" item="id" index="index" open="(" separator="," close=")">
+                    #{id}
+                </foreach>
+            </if>
+        </where>
+    </update>
+
+    <update id="delStatus2" parameterType="List">
+        update `userinfo` set user_role=replace(user_role,',2','')
+        <where>
+            <if test="idList != null">
+                 user_id in
+                <foreach collection="idList" item="id" index="index" open="(" separator="," close=")">
+                    #{id}
+                </foreach>
+            </if>
+        </where>
+    </update>
+</mapper>
+

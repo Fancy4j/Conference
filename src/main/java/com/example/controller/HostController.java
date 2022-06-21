@@ -4,6 +4,7 @@ import com.example.api.CommonResult;
 import com.example.pojo.Meetinginfo;
 import com.example.services.HostService;
 import com.example.services.MeetingInfoService;
+import com.example.services.ReviewerService;
 import com.example.services.UserServices;
 import com.github.pagehelper.PageHelper;
 import io.swagger.annotations.Api;
@@ -28,30 +29,65 @@ public class HostController {
     @Autowired
     HostService hostService;
 
+    @Autowired
+    ReviewerService reviewerService;
+
+
     @PostMapping(value = "/userStatusUpdate")
     @ApiOperation(value = "指派审稿人（修改用户角色）", notes = "lbf")
-    public CommonResult userStatusUpdate(@RequestParam("email") String email,
-                                         @RequestParam("appointTime") String appointTime,
+    public CommonResult userStatusUpdate(@RequestParam("userIds") String userIds,
+                                         @RequestParam(value = "appointTime",required = false) String appointTime,
                                          @RequestParam("meetingId")Integer meetingId) {
-        if(StringUtils.isEmpty(email)){
-            return CommonResult.validateFailed("email为空");
-        }
-        if(StringUtils.isEmpty(appointTime)){
-            return CommonResult.validateFailed("时间为空");
+        if(StringUtils.isEmpty(userIds)){
+            return CommonResult.validateFailed("userId为空");
         }
         if(meetingId == null){
             return CommonResult.validateFailed("会议号为空");
         }
         try{
-            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            Date date = simpleDateFormat.parse(appointTime);
-            return userServices.updateUserStatus(email,date,meetingId);
+            Date date = null;
+            if(appointTime != null) {
+                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                date = simpleDateFormat.parse(appointTime);
+            }
+            return userServices.updateUserStatus(userIds,date,meetingId);
         }catch (Exception e){
             e.printStackTrace();
-            log.error("userStatusUpdate接口异常，入参1为{},入参2为{}，入参3{}",email,appointTime,meetingId);
+            log.error("userStatusUpdate接口异常，入参1为{},入参2为{}",userIds,meetingId);
             return CommonResult.failed("增加审稿人异常");
         }
     }
+
+    @GetMapping(value = "/reviewerAllocated")
+    @ApiOperation(value = "根据会议id,查询已经指派的审稿人", notes = "lbf")
+    public CommonResult reviewerAllocated(@RequestParam("meetingId") Integer meetingId) {
+        if(meetingId == null){
+            return CommonResult.validateFailed("会议号为空");
+        }
+        try{
+            return reviewerService.reviewerAllocated(meetingId);
+        }catch (Exception e){
+            e.printStackTrace();
+            log.error("reviewerAllocated接口异常，入参1为{}",meetingId);
+            return CommonResult.failed("查询已指派的审稿人异常");
+        }
+    }
+
+    @GetMapping(value = "/reviewerAvailable")
+    @ApiOperation(value = "根据会议id,查询没有被指派的人", notes = "lbf")
+    public CommonResult reviewerAvailable(@RequestParam("meetingId") Integer meetingId) {
+        if(meetingId == null){
+            return CommonResult.validateFailed("会议号为空");
+        }
+        try{
+            return reviewerService.reviewerAvailable(meetingId);
+        }catch (Exception e){
+            e.printStackTrace();
+            log.error("reviewerAvailable接口异常，入参1为{}",meetingId);
+            return CommonResult.failed("查询未指派的人异常");
+        }
+    }
+
 
 
     @PostMapping(value = "/addMeeting")
