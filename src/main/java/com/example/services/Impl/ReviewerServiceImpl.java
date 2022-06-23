@@ -6,6 +6,7 @@ import com.example.mapper.ReviewerMeetingMapper;
 import com.example.mapper.ReviewerReplayMapper;
 import com.example.mapper.UserInfoMapper;
 import com.example.pojo.Userinfo;
+import com.example.pojo.ReviewerReplay;
 import com.example.services.ReviewerService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -87,5 +88,18 @@ public class ReviewerServiceImpl implements ReviewerService {
         }
 
         return CommonResult.failed("派稿失败");
+    }
+
+    @Override
+    public List<ReviewerReplay> getReviewerInfo(Integer reviewId){
+        List<ReviewerReplay> result = null ;
+        result =  reviewerReplayMapper.getArticleInfo(reviewId);
+        return result;
+    }
+
+    @Override
+    public void insertReviewerInfo(ReviewerReplay reviewerReplay) {
+        reviewerReplayMapper.updateReviewerReplay(reviewerReplay);
+        reviewerReplayMapper.updateArticleStatus(reviewerReplay);
     }
 }
