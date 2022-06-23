@@ -5,11 +5,10 @@
     <select id="reviewerAvailable"  resultType="com.example.pojo.Userinfo">
         select distinct * from (
         select t1.* from `userinfo` t1
-        inner join contributor_meeting t2 on t1.user_id = t2.user_id
         <where>
-            t2.meeting_id != #{meetingId} and
+        t1.user_id not in (select user_id from contributor_meeting where meeting_id = #{meetingId})
             <if test="reviewerIdList != null and reviewerIdList.size() > 0">
-              t1.user_id not in
+                and t1.user_id not in
                 <foreach collection="reviewerIdList" item="ids" index="index" open="(" separator="," close=")">
                     #{ids}
                 </foreach>

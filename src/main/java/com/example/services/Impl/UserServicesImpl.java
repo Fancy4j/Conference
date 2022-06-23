@@ -92,7 +92,7 @@ public class UserServicesImpl implements UserServices {
             return CommonResult.validateFailed("用户身份不能为空");
         }
         User user1 = userMapper.selectOne(new QueryWrapper<User>().eq("username", username));
-        User user3 = userMapper.selectOne(new QueryWrapper<User>().eq("email", userInfo.getEmail()));
+        Userinfo user3 = userInfoMapper.selectOne(new QueryWrapper<Userinfo>().eq("email", userInfo.getEmail()));
         if(user1!=null){
             return CommonResult.validateFailed("用户名已存在！");
         }
