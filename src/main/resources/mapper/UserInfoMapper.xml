@@ -2,16 +2,20 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.example.mapper.UserInfoMapper">
 
-    <select id="reviewerAvailable" parameterType="List" resultType="com.example.pojo.Userinfo">
-        select * from `userinfo`
+    <select id="reviewerAvailable"  resultType="com.example.pojo.Userinfo">
+        select distinct * from (
+        select t1.* from `userinfo` t1
+        inner join contributor_meeting t2 on t1.user_id = t2.user_id
         <where>
+            t2.meeting_id != #{meetingId} and
             <if test="reviewerIdList != null and reviewerIdList.size() > 0">
-                 user_id not in
+              t1.user_id not in
                 <foreach collection="reviewerIdList" item="ids" index="index" open="(" separator="," close=")">
                     #{ids}
                 </foreach>
             </if>
         </where>
+        ) tt
     </select>
 
     <update id="updateStatus2" parameterType="List">

@@ -13,7 +13,7 @@ import java.util.List;
 @Repository
 public interface UserInfoMapper extends BaseMapper<Userinfo> {
 
-    List<Userinfo> reviewerAvailable(@Param("reviewerIdList")List<Integer> reviewerIdList);
+    List<Userinfo> reviewerAvailable(@Param("reviewerIdList")List<Integer> reviewerIdList, @Param("meetingId") Integer meetingId);
 
     int updateStatus2(@Param("idList") ArrayList<Integer> idList);
 

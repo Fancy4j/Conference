@@ -42,7 +42,7 @@ public class ReviewerServiceImpl implements ReviewerService {
     @Override
     public CommonResult reviewerAvailable(Integer meetingId) {
         List<Integer> reviewerIdList = reviewerMeetingMapper.reviewerIdByMeetingId(meetingId);
-        List<Userinfo> reviewerList = userInfoMapper.reviewerAvailable(reviewerIdList);
+        List<Userinfo> reviewerList = userInfoMapper.reviewerAvailable(reviewerIdList,meetingId);
         return CommonResult.success(reviewerList,"查询成功");
     }
 
