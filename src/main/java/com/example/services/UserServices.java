@@ -30,4 +30,6 @@ public interface UserServices {
     CommonResult getUserInfo(Integer userId);
 
     CommonResult updateUserInfo(Userinfo userInfo);
+
+    CommonResult updateUserStatus2(String userIds,Date appointTime, Integer meetingId);
 }

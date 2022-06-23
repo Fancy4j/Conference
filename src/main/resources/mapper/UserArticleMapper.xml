@@ -7,16 +7,16 @@
     </select>
 
     <select id="selectArticleInfo" parameterType="Integer" resultType="com.example.pojo.UserArticle">
-        select t1.*,
+        select distinct * from (select t1.*,
         t3.meeting_id,t3.theme,t3.name,t3.abbreviation,t3.starttime,t3.endtime,t3.location,t3.ref,t3.detail,
         if(endtime &lt; now(),0,1) as conference_status
         from user_article t1 inner join meeting_article t2 on t1.article_id = t2.article_id
         inner join meetinginfo t3 on t3.meeting_id = t2.meeting_id
-        where t1.user_id = #{userId}
+        where t1.user_id = #{userId}) tt
     </select>
 
     <select id="selectArticleInfo2" resultType="com.example.pojo.UserArticle">
-        select t1.*,
+        select distinct * from (select t1.*,
         t3.meeting_id,t3.theme,t3.name,t3.abbreviation,t3.starttime,t3.endtime,t3.location,t3.ref,t3.detail,
         if(endtime &lt; now(),0,1) as conference_status
         from user_article t1 inner join meeting_article t2 on t1.article_id = t2.article_id
@@ -29,6 +29,7 @@
                 t1.title LIKE "%"#{articleName}"%"
             </if>
         </where>
+        ) tt
     </select>
 </mapper>
 

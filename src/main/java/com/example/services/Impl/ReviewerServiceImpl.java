@@ -56,6 +56,12 @@ public class ReviewerServiceImpl implements ReviewerService {
         List<Integer> articleIds = meetingArticleMapper.getArticleIds(meetingId);
         List<Integer> reviewerIds = reviewerMeetingMapper.getReviewerIds(meetingId);
         HashMap<Integer, List<Integer>> map = new HashMap<>();
+        if(articleIds == null || articleIds.size() == 0){
+            return CommonResult.failed("会议中没有稿件可以分配");
+        }
+        if(reviewerIds == null || reviewerIds.size() == 0){
+            return CommonResult.failed("没有审稿人可以去分配稿件");
+        }
         //打乱文章id、审稿人id 顺序
         Collections.shuffle(articleIds);
         Collections.shuffle(reviewerIds);

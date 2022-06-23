@@ -12,9 +12,7 @@
 
 
     <select id="reviewerIdByMeetingId" parameterType="Integer" resultType="Integer">
-        select t2.user_id
-        from reviewer_meeting t1
-        inner join `userinfo` t2 on t1.user_id = t2.user_id
+        select t1.user_id from reviewer_meeting t1
         where t1.meeting_id = #{meetingId}
     </select>
 

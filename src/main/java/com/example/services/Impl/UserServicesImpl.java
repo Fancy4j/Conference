@@ -9,6 +9,7 @@ import com.example.pojo.ReviewerMeeting;
 import com.example.pojo.User;
 import com.example.pojo.Userinfo;
 import com.example.services.UserServices;
+import io.swagger.models.auth.In;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -196,5 +197,112 @@ public class UserServicesImpl implements UserServices {
             return CommonResult.success(userInfo,"修改用户详细信息成功");
         }
         return CommonResult.failed("修改用户详细信息失败");
+    }
+
+    @Override
+    public CommonResult updateUserStatus2(String userIds,Date appointTime, Integer meetingId) {
+        //处理userId为数组
+        String[] split = userIds.split(",");
+        //删除会议所有的审稿人
+        if(split == null || split.length == 0){
+            ArrayList<Integer> reviewerIds = (ArrayList<Integer>) reviewerMeetingMapper.getReviewerIds(meetingId);
+            int delete = reviewerMeetingMapper.delete(new QueryWrapper<ReviewerMeeting>().eq("meeting_id", meetingId));
+            List<ReviewerMeeting> reviewerMeetings = reviewerMeetingMapper.selectList(new QueryWrapper<ReviewerMeeting>().in("user_id", reviewerIds));
+            //都是meetingId的审稿人
+            if(reviewerMeetings == null || reviewerMeetings.size() == 0){
+                int update1 = userInfoMapper.delStatus2(reviewerIds);
+                int update2 = userMapper.delStatus2(reviewerIds);
+            }else{
+                //找到
+                for(int j = 0; j < reviewerMeetings.size();j++){
+                    Integer id = reviewerMeetings.get(j).getUserId();
+                    System.out.println("id:"+id);
+                    reviewerIds.remove(reviewerMeetings.get(j).getUserId());
+                }
+                if(reviewerIds != null && reviewerIds.size() != 0) {
+                    int update1 = userInfoMapper.delStatus2(reviewerIds);
+                    int update2 = userMapper.delStatus2(reviewerIds);
+                }
+            }
+            return CommonResult.success("操作成功");
+        }else{
+            ArrayList<Integer> idList = new ArrayList<>();
+            for(int i = 0; i < split.length; i++) {
+                Integer id = Integer.valueOf(split[i]);
+                idList.add(id);
+            }
+            //已添加的审稿人
+            ArrayList<Integer> ids = (ArrayList<Integer>) reviewerMeetingMapper.getReviewerIds(meetingId);
+            //如果该会议没有指派任何审稿人
+            if(ids == null || ids.size() == 0){
+                for(int i = 0; i < idList.size();i++){
+                    ReviewerMeeting reviewerMeeting = new ReviewerMeeting();
+                    reviewerMeeting.setUserId(idList.get(i));
+                    reviewerMeeting.setMeetingId(meetingId);
+                    reviewerMeeting.setAppointTime(appointTime);
+                    int insert = reviewerMeetingMapper.insert(reviewerMeeting);
+                }
+                int i = userMapper.updateStatus2(idList);
+                int i1 = userInfoMapper.updateStatus2(idList);
+                return CommonResult.success("指派审稿人成功1");
+            }else {
+                if(ids.containsAll(idList) && idList.containsAll(ids)){
+                    return CommonResult.success("指派审稿人成功2");
+                }
+                //不需要进行操作的审稿人
+                ArrayList<Integer> oldIds = (ArrayList<Integer>) idList.clone();
+                oldIds.retainAll(ids);
+                //需要新增的审稿人
+                ArrayList<Integer> addIdsList = (ArrayList<Integer>) idList.clone();
+                addIdsList.removeAll(oldIds);
+                //需要删除的审稿人
+                ArrayList<Integer> delIdsList = (ArrayList<Integer>) ids.clone();
+                delIdsList.removeAll(oldIds);
+
+                //删除审稿人、更新用户状态
+                if(delIdsList != null && delIdsList.size() != 0) {
+                    int delete = reviewerMeetingMapper.delete(new QueryWrapper<ReviewerMeeting>().eq("meeting_id", meetingId).in("user_id", delIdsList));
+                    //查询不是meetingId会议，是其他会议的审稿人
+                    List<ReviewerMeeting> reviewerMeetings = reviewerMeetingMapper.selectList(new QueryWrapper<ReviewerMeeting>().in("user_id", delIdsList));
+
+                    //都是meetingId的审稿人
+                    if(reviewerMeetings == null || reviewerMeetings.size() == 0){
+                        int update1 = userInfoMapper.delStatus2(delIdsList);
+                        int update2 = userMapper.delStatus2(delIdsList);
+                    }else{
+                        //找到
+                        for(int j = 0; j < reviewerMeetings.size();j++){
+                            Integer id = reviewerMeetings.get(j).getUserId();
+                            System.out.println("id:"+id);
+                            delIdsList.remove(reviewerMeetings.get(j).getUserId());
+                        }
+                        if(delIdsList != null && delIdsList.size() != 0) {
+                            int update1 = userInfoMapper.delStatus2(delIdsList);
+                            int update2 = userMapper.delStatus2(delIdsList);
+                        }
+                    }
+                }
+                //新增审稿人、更新用户状态
+                if(addIdsList != null && addIdsList.size() != 0) {
+//                    ArrayList<HashMap<String, Integer>> mapList = new ArrayList<>();
+                    for (int i = 0; i < addIdsList.size(); i++) {
+//                        HashMap<String, Integer> map = new HashMap<>();
+//                        map.put("meetingId", meetingId);
+//                        map.put("userId", idList.get(i));
+//                        mapList.add(map);
+                        ReviewerMeeting reviewerMeeting = new ReviewerMeeting();
+                        reviewerMeeting.setUserId(addIdsList.get(i));
+                        reviewerMeeting.setMeetingId(meetingId);
+                        reviewerMeeting.setAppointTime(appointTime);
+                        int insert = reviewerMeetingMapper.insert(reviewerMeeting);
+                    }
+//                    int insert = reviewerMeetingMapper.insertBatch(mapList);
+                    int update3 = userMapper.updateStatus2(addIdsList);
+                    int update4 = userInfoMapper.updateStatus2(addIdsList);
+                }
+                return CommonResult.success("指派审稿人成功3");
+            }
+        }
+//        return CommonResult.failed("指派审稿人失败");
     }
 }

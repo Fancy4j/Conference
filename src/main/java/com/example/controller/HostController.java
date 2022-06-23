@@ -58,6 +58,28 @@ public class HostController {
         }
     }
 
+    @PostMapping(value = "/userStatusUpdate2")
+    @ApiOperation(value = "指派审稿人（修改用户角色）_v2版本", notes = "lbf")
+    public CommonResult userStatusUpdate2(@RequestParam("userIds") String userIds,
+                                          @RequestParam(value = "appointTime") String appointTime,
+                                         @RequestParam("meetingId")Integer meetingId) {
+        if(meetingId == null){
+            return CommonResult.validateFailed("会议号为空");
+        }
+        try{
+            Date date = null;
+            if(StringUtils.isEmpty(appointTime)) {
+                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                date = simpleDateFormat.parse(appointTime);
+            }
+            return userServices.updateUserStatus2(userIds,date,meetingId);
+        }catch (Exception e){
+            e.printStackTrace();
+            log.error("userStatusUpdate2接口异常，入参1为{},入参2为{}",userIds,meetingId);
+            return CommonResult.failed("增加审稿人异常");
+        }
+    }
+
     @GetMapping(value = "/reviewerAllocated")
     @ApiOperation(value = "根据会议id,查询已经指派的审稿人", notes = "lbf")
     public CommonResult reviewerAllocated(@RequestParam("meetingId") Integer meetingId) {

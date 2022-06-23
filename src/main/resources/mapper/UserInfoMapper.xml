@@ -17,11 +17,12 @@
     <update id="updateStatus2" parameterType="List">
         update `userinfo` set user_role=CONCAT(user_role,',2')
         <where>
-            <if test="idList != null">
+            <if test="idList != null and idList.size() > 0">
                  user_id in
                 <foreach collection="idList" item="id" index="index" open="(" separator="," close=")">
                     #{id}
                 </foreach>
+                and find_in_set('2',user_role) = 0
             </if>
         </where>
     </update>
@@ -29,7 +30,7 @@
     <update id="delStatus2" parameterType="List">
         update `userinfo` set user_role=replace(user_role,',2','')
         <where>
-            <if test="idList != null">
+            <if test="idList != null and idList.size() > 0">
                  user_id in
                 <foreach collection="idList" item="id" index="index" open="(" separator="," close=")">
                     #{id}
