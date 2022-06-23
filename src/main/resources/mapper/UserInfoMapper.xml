@@ -5,7 +5,7 @@
     <select id="reviewerAvailable" parameterType="List" resultType="com.example.pojo.Userinfo">
         select * from `userinfo`
         <where>
-            <if test="reviewerIdList != null">
+            <if test="reviewerIdList != null and reviewerIdList.size() > 0">
                  user_id not in
                 <foreach collection="reviewerIdList" item="ids" index="index" open="(" separator="," close=")">
                     #{ids}
