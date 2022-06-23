@@ -40,6 +40,10 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
+
+        <!-- 吴俊加的 -->
+
+
         <!--下面的都是我加的-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -116,6 +120,7 @@
             <artifactId>lombok</artifactId>
             <optional>true</optional>
         </dependency>
+
 
         <!--swagger2-->
         <dependency>

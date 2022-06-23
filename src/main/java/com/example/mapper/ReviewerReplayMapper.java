@@ -8,9 +8,19 @@ import com.example.pojo.UserArticle;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Mapper
 @Repository
 public interface ReviewerReplayMapper extends BaseMapper<ReviewerReplay> {
 
-    ReviewerReplay getArticle(Integer article);
+    ReviewerReplay getArticle(Integer articleId);
+
+    List<ReviewerReplay> getArticleInfo(Integer reviewId);
+
+    void insertReviewerReplay(ReviewerReplay reviewerReplay);
+
+    void updateArticleStatus(ReviewerReplay reviewerReplay);
+
+    void updateReviewerReplay(ReviewerReplay reviewerReplay);
 }

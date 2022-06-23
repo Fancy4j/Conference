@@ -32,17 +32,39 @@ public class ReviewerReplay {
     @TableField("article_id")
     Integer articleId;
 
+
+
+    @ApiModelProperty("会议id")
+    @TableField(exist = false)
+    Integer meetingId;
+
+    @ApiModelProperty("会议名称")
+    @TableField(exist = false)
+    String meetingName;
+
+
+    @ApiModelProperty("投稿时间")
+    @TableField(exist = false)
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    Date ctime;
+
+
+
+
     @ApiModelProperty("文章标题")
     @TableField(exist = false)
     String title;
 
-    @ApiModelProperty("文章内容")
-    @TableField(exist = false)
-    String content;
 
-    @ApiModelProperty("文章关键字")
+    @ApiModelProperty("文章链接")
     @TableField(exist = false)
-    String keywords;
+    String articleRef;
+
+
+
+
+
 
     @ApiModelProperty("文章审核状态")
     @TableField(exist = false)

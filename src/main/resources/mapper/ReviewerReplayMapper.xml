@@ -10,4 +10,31 @@
         right join userinfo t3 on t2.reviewer_id = t3.user_id
         where t1.article_id = #{articleId} and t1.status &lt; 4
     </select>
+
+    <select id="getArticleInfo" parameterType="Integer" resultType="com.example.pojo.ReviewerReplay">
+				select t1.*,t2.meeting_id,t3.`name` as meetingName,t4.ctime,t4.article_ref,t4.`title`,t4.`status`
+
+				from reviewer_replay t1
+				RIGHT JOIN meeting_article t2 on t1.article_id = t2.article_id
+				RIGHT JOIN meetinginfo t3 on t2.meeting_id = t3.meeting_id
+				RIGHT JOIN user_article t4 on t1.article_id = t4.article_id
+
+				where t1.reviewer_id = #{reviewId}
+    </select>
+    <insert id="insertReviewerReplay" parameterType="com.example.pojo.ReviewerReplay">
+        INSERT INTO reviewer_replay ( reviewer_id, article_id, replay, replay_time )
+        VALUES
+	    ( #{reviewerId} , #{articleId} , #{replay} , now())
+    </insert>
+    <update id="updateReviewerReplay" parameterType="com.example.pojo.ReviewerReplay">
+        UPDATE reviewer_replay
+        SET     replay = #{replay},replay_time = now()
+        WHERE   article_id = #{articleId} and reviewer_id = #{reviewerId}
+    </update>
+
+    <update id="updateArticleStatus" parameterType="com.example.pojo.ReviewerReplay">
+        UPDATE user_article
+        SET user_article.`status` = #{status}
+        WHERE article_id = #{articleId}
+    </update>
 </mapper>
