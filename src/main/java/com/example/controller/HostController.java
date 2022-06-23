@@ -46,7 +46,7 @@ public class HostController {
         }
         try{
             Date date = null;
-            if(appointTime != null) {
+            if(StringUtils.isEmpty(appointTime)) {
                 SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                 date = simpleDateFormat.parse(appointTime);
             }
@@ -70,6 +70,21 @@ public class HostController {
             e.printStackTrace();
             log.error("reviewerAllocated接口异常，入参1为{}",meetingId);
             return CommonResult.failed("查询已指派的审稿人异常");
+        }
+    }
+
+    @GetMapping(value = "/dispatchArticle")
+    @ApiOperation(value = "一键派稿", notes = "lbf")
+    public CommonResult dispatchArticle(@RequestParam("meetingId") Integer meetingId) {
+        if(meetingId == null){
+            return CommonResult.validateFailed("会议号为空");
+        }
+        try{
+            return reviewerService.dispatchArticle(meetingId);
+        }catch (Exception e){
+            e.printStackTrace();
+            log.error("dispatchArticle接口异常，入参1为{}",meetingId);
+            return CommonResult.failed("派稿异常");
         }
     }
 

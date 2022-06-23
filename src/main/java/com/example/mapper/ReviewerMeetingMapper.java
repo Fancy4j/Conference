@@ -17,4 +17,6 @@ public interface ReviewerMeetingMapper extends BaseMapper<ReviewerMeeting> {
 
     List<Integer> reviewerIdByMeetingId(Integer meetingId);
 
+    List<Integer> getReviewerIds(Integer meetingId);
+
 }

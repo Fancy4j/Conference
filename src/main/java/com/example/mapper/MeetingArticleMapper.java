@@ -5,7 +5,12 @@ import com.example.pojo.MeetingArticle;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Mapper
 @Repository
 public interface MeetingArticleMapper extends BaseMapper<MeetingArticle> {
+
+    List<Integer> getArticleIds(Integer meetingId);
+
 }

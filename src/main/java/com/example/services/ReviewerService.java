@@ -7,4 +7,6 @@ public interface ReviewerService {
     CommonResult reviewerAllocated(Integer meetingId);
 
     CommonResult reviewerAvailable(Integer meetingId);
+
+    CommonResult dispatchArticle(Integer meetingId);
 }

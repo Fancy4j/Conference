@@ -13,4 +13,14 @@
         right join meetinginfo t5 on t5.meeting_id = t4.meeting_id
         where t1.article_id = #{articleId} and t1.status &lt; 10
     </select>
+
+    <insert id="dispatchArticle" parameterType="List">
+        insert into reviewer_replay (reviewer_id, article_id) values
+        <foreach collection="mapList" item="item" index="index" separator=",">
+            (
+            #{item.reviewerId},
+            #{item.articleId}
+            )
+        </foreach>
+    </insert>
 </mapper>

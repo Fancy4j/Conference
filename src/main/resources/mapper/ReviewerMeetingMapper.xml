@@ -18,4 +18,8 @@
         where t1.meeting_id = #{meetingId}
     </select>
 
+    <select id="getReviewerIds" parameterType="Integer" resultType="java.lang.Integer">
+        select user_id from reviewer_meeting where meeting_id = #{meetingId}
+    </select>
+
 </mapper>
