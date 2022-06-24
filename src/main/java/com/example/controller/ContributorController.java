@@ -99,4 +99,16 @@ public class ContributorController {
             return CommonResult.failed("无法取消投稿");
         }
     }
+
+    @GetMapping("/getStatusTime")
+    @ApiOperation(value = "获取稿件状态、时间",notes = "lbf")
+    public CommonResult getStatusTime(@RequestParam("articleId")Integer articleId){
+        try {
+            return contributorService.getStatusTime(articleId);
+        }catch (Exception e){
+            e.printStackTrace();
+            log.error("getStatusTime接口异常,入参为{}",articleId);
+            return CommonResult.failed("无法获取稿件状态、时间");
+        }
+    }
 }

@@ -13,4 +13,7 @@ public interface ContributorService {
     CommonResult delContrubution(Integer articleId);
 
     CommonResult queryArticlesByName(Integer userId, String articleName, Integer pageNum, Integer pageSize);
+
+    CommonResult getStatusTime(Integer articleId);
+
 }

@@ -2,14 +2,8 @@ package com.example.services.Impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.example.api.CommonResult;
-import com.example.mapper.ContributorMapper;
-import com.example.mapper.MeetingArticleMapper;
-import com.example.mapper.ReviewerReplayMapper;
-import com.example.mapper.UserArticleMapper;
-import com.example.pojo.ContributorMeeting;
-import com.example.pojo.MeetingArticle;
-import com.example.pojo.ReviewerReplay;
-import com.example.pojo.UserArticle;
+import com.example.mapper.*;
+import com.example.pojo.*;
 import com.example.services.ContributorService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -17,6 +11,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 @Slf4j
@@ -34,6 +30,9 @@ public class ContributorServiceImpl implements ContributorService {
 
     @Autowired
     MeetingArticleMapper meetingArticleMapper;
+
+    @Autowired
+    ReviewerMeetingMapper reviewerMeetingMapper;
 
     @Override
     public CommonResult addContribution(UserArticle userArticle, Integer meetingId) {
@@ -98,5 +97,34 @@ public class ContributorServiceImpl implements ContributorService {
         List<UserArticle> userArticleList = userArticleMapper.selectArticleInfo2(userId,articleName);
         PageInfo<UserArticle> pageInfo = new PageInfo<UserArticle>(userArticleList);
         return CommonResult.success(pageInfo,"查询成功");
+    }
+
+    @Override
+    public CommonResult getStatusTime(Integer articleId) {
+        UserArticle userArticle = userArticleMapper.selectOne(new QueryWrapper<UserArticle>().eq("article_id", articleId));
+        HashMap<String, Date> map = new HashMap<>();
+        //投稿时间
+        Date ctime = userArticle.getCtime();
+        map.put("ctime",ctime);
+        //稿件状态
+        Integer status = userArticle.getStatus();
+        if(status != 1 && status != 10){
+            MeetingArticle meetingArticle = meetingArticleMapper.selectOne(new QueryWrapper<MeetingArticle>().eq("article_id", articleId));
+            if(meetingArticle == null || meetingArticle.getMeetingId() == null){
+                return CommonResult.failed("数据库数据异常,请工作人员维护");
+            }
+            ReviewerMeeting reviewerMeeting = reviewerMeetingMapper.selectOne(new QueryWrapper<ReviewerMeeting>().eq("meeting_id", meetingArticle.getMeetingId()));
+            Date appointTime = reviewerMeeting.getAppointTime();
+            map.put("appointTime",appointTime);
+            if(status != 2) {
+                ReviewerReplay reviewerReplay = reviewerReplayMapper.selectOne(new QueryWrapper<ReviewerReplay>().eq("article_id", articleId));
+                if(reviewerReplay == null || reviewerReplay.getReplayTime() == null){
+                    return CommonResult.failed("数据库数据异常，请工作人员维护呀");
+                }
+                Date replayTime = reviewerReplay.getReplayTime();
+                map.put("replayTime",replayTime);
+            }
+        }
+        return CommonResult.success(map,"查询成功");
     }
 }
