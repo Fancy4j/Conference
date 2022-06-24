@@ -3,7 +3,10 @@
 <mapper namespace="com.example.mapper.MeetingArticleMapper">
 
     <select id="getArticleIds" parameterType="Integer" resultType="java.lang.Integer">
-        select article_id from meeting_article where meeting_id = #{meetingId}
+        SELECT DISTINCT * FROM (select t1.article_id from meeting_article t1
+        inner join user_article t2 on t1.article_id = t2.article_id
+        where meeting_id = #{meetingId} and t2.status != 10
+        ) tt
     </select>
 </mapper>
 
