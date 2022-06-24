@@ -68,7 +68,7 @@ public class HostController {
         }
         try{
             Date date = null;
-            if(StringUtils.isEmpty(appointTime)) {
+            if(!StringUtils.isEmpty(appointTime)) {
                 SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                 date = simpleDateFormat.parse(appointTime);
             }
